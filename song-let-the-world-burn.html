@@ -1,0 +1,76 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width,initial-scale=1" />
+ <title>Let the World Burn Pookie Cynthia</title>
+ <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Parisienne&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+ <style>
+ :root{ --spotify-green:#1DB954; --spotify-dark:#121212; --spotify-card:#282828; }
+ *{box-sizing:border-box}
+ html,body{height:100%;margin:0}
+ body{
+ font-family:Montserrat,system-ui,Arial,Helvetica,sans-serif;
+ background:linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 50%, var(--spotify-dark) 100%);
+ display:flex;align-items:center;justify-content:center;
+ padding:3rem;
+ }
+ .stage{width:100%;max-width:760px}
+ .card{
+ position:relative;
+ background:var(--spotify-card);
+ border-radius:16px;
+ padding:3rem 2.5rem;
+ box-shadow:0 12px 30px rgba(0,0,0,0.5);
+ text-align:center;
+ border:2px solid var(--spotify-green);
+ }
+ h1{
+ font-family:Parisienne, cursive;
+ font-size:3.2rem;
+ margin:0 0 .8rem;
+ color:var(--spotify-green);
+ text-shadow:0 4px 16px rgba(29,185,84,.3);
+ }
+ .subtitle{
+ font-family:Caveat,cursive;
+ font-size:1.3rem;
+ color:#b3b3b3;
+ margin:.2rem 0 1.4rem;
+ }
+ .audio-player{`n background:var(--spotify-card);`n border:2px solid var(--spotify-green);`n border-radius:12px;`n padding:1.5rem;`n margin:2rem 0;`n box-shadow:0 8px 20px rgba(29,185,84,.2);`n }
+ audio{width:100%;height:40px;outline:none}
+ .back-btn{
+ display:inline-block;margin-top:1.2rem;padding:.6rem 1.4rem;
+ background:var(--spotify-green);
+ color:#000;border:none;border-radius:24px;cursor:pointer;font-weight:700;
+ box-shadow:0 6px 14px rgba(29,185,84,.25);text-decoration:none;font-size:1rem;
+ transition:all .2s ease;
+ }
+ .back-btn:hover{background:#1ed760;transform:scale(1.05)}
+ .back-btn:active{transform:scale(0.98)}
+ .no-content{
+ font-family:Caveat,cursive;
+ font-size:1.1rem;
+ color:#b3b3b3;
+ margin:0;
+ font-style:italic;
+ }
+ </style>
+</head>
+<body>
+ <main class="stage">
+ <section class="card">
+ <h1>Let the World Burn</h1>
+ <p class="subtitle"></p>
+ <div class="audio-player">
+ <p class="no-content">Audio file not added yet.</p>
+ <audio controls autoplay src="images/let-the-world-burn.mp3"></audio>`n </div>`n <a href="music.html" class="back-btn">Back to Music</a>
+ </section>
+ </main> <script src="player.js"></script>
+</body>
+</html>
+
+
+
+

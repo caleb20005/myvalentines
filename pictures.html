@@ -1,0 +1,485 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width,initial-scale=1" />
+ <title>Picture Gallery for you Pookie Cynthia</title>
+ <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Parisienne&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+ <style>
+ :root{ --accent:#ff4d88; --accent2:#ff7bb3; --card:#ffffffaa; }
+ *{box-sizing:border-box}
+ html,body{height:100%;margin:0}
+ body{
+ font-family:Montserrat,system-ui,Arial,Helvetica,sans-serif;
+ background: linear-gradient(120deg, #ffb3c6 0%, #c8a2ff 35%, #ff8aa2 65%, #ffd1d9 100%);
+ background-size: 600% 600%;
+ animation: gradientShift 12s ease infinite;
+ display:flex;align-items:center;justify-content:center;
+ padding:3rem;
+ }
+ .stage{width:100%;max-width:960px}
+ .card{
+ position:relative;
+ background:var(--card);
+ border-radius:22px;
+ padding:3rem 2.5rem;
+ box-shadow:0 12px 30px rgba(0,0,0,0.15);
+ text-align:center;
+ max-height:90vh;
+ overflow-y:auto;
+ }
+ h1{
+ font-family:Parisienne, cursive;
+ font-size:3.8rem;
+ margin:0 0 1rem;
+ color:#fff;
+ text-shadow:0 6px 20px rgba(255,77,136,.25), 0 2px 6px rgba(0,0,0,.12);
+ }
+ .subtitle{
+ font-family:Caveat,cursive;
+ font-size:1.4rem;
+ color:#5a2a3a;
+ margin:.5rem 0 1.4rem;
+ }
+ .slideshow-toggle{
+ display:inline-block;margin:1rem 0;padding:.5rem 1rem;
+ background:linear-gradient(180deg,var(--accent),var(--accent2));
+ color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;
+ box-shadow:0 4px 10px rgba(255,77,136,.14);transition:all .2s ease;
+ }
+ .slideshow-toggle:hover{transform:translateY(-2px)}
+ .category{
+ margin:2.2rem 0;
+ text-align:left;
+ }
+ .category-title{
+ font-family:Caveat,cursive;
+ font-size:1.5rem;
+ font-weight:700;
+ color:#5a2a3a;
+ margin:.8rem 0 1rem;
+ text-align:center;
+ }
+ .category-grid{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;
+ }
+ .pic-slot{
+ background:linear-gradient(135deg,#ffb3d1,#ff8aa2);
+ border-radius:10px;
+ padding:0;
+ display:flex;align-items:center;justify-content:center;
+ min-height:160px;
+ font-size:2.4rem;
+ box-shadow:0 4px 12px rgba(255,77,136,.1);
+ transition:all .2s ease;
+ cursor:pointer;
+ position:relative;
+ overflow:hidden;
+ }
+ .pic-slot:hover{transform:none;box-shadow:0 4px 12px rgba(255,77,136,.1)}
+ .pic-slot.locked{
+ cursor:default;
+ }
+ .pic-slot.locked:hover{
+ transform:none;
+ box-shadow:0 4px 12px rgba(255,77,136,.1);
+ }
+ .pic-slot img{
+ width:100%;height:100%;object-fit:cover;display:block;
+ }
+ .pic-slot-placeholder{
+ width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+ }
+ .pic-slot input[type="file"]{
+ display:none;
+ }
+ /* Slideshow modal */
+ .slideshow-modal{
+ display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;
+ flex-direction:column;align-items:center;justify-content:center;
+ animation:fadeIn .3s ease;
+ }
+ .slideshow-modal.active{
+ display:flex;
+ }
+ .slideshow-container{
+ position:relative;width:90%;max-width:600px;background:white;
+ border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);
+ }
+ .slide{
+ display:none;width:100%;aspect-ratio:1;position:relative;
+ }
+ .slide.active{
+ display:flex;align-items:center;justify-content:center;animation:slideIn .4s ease;
+ }
+ .slide img{
+ width:100%;height:100%;object-fit:cover;
+ }
+ .slide-counter{
+ position:absolute;bottom:1rem;left:1rem;background:rgba(0,0,0,.6);
+ color:white;padding:.4rem .8rem;border-radius:6px;font-size:.9rem;font-weight:600;
+ }
+ .slideshow-controls{
+ display:flex;justify-content:center;align-items:center;gap:1rem;
+ padding:1.4rem;background:#fff;flex-wrap:wrap;
+ }
+ .slide-btn{
+ padding:.6rem 1rem;background:linear-gradient(180deg,var(--accent),var(--accent2));
+ color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;
+ box-shadow:0 4px 10px rgba(255,77,136,.12);transition:all .2s ease;
+ }
+ .slide-btn:hover{transform:translateY(-2px)}
+ .slide-btn:active{transform:translateY(1px)}
+ .close-slideshow{
+ position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,.5);
+ color:white;border:none;width:36px;height:36px;border-radius:50%;
+ cursor:pointer;font-size:1.4rem;display:flex;align-items:center;justify-content:center;
+ transition:all .2s ease;z-index:10;
+ }
+ .close-slideshow:hover{background:rgba(0,0,0,.8)}
+ @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+ @keyframes slideIn{from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)}}
+ .no-content{
+ font-family:Caveat,cursive;
+ font-size:1.2rem;
+ color:#6b3a4a;
+ margin:2rem 0;
+ font-style:italic;
+ }
+ .back-btn{
+ display:inline-block;margin-top:1.4rem;padding:.6rem 1.2rem;
+ background:linear-gradient(180deg,var(--accent),var(--accent2));
+ color:white;border:none;border-radius:10px;cursor:pointer;font-weight:700;
+ box-shadow:0 6px 14px rgba(255,77,136,.12);text-decoration:none;font-size:1rem;
+ transition:transform .2s ease;
+ }
+ .back-btn:hover{transform:translateY(-2px)}
+ .back-btn:active{transform:translateY(1px)}
+ @keyframes gradientShift{
+ 0%{background-position:0% 50%}
+ 50%{background-position:100% 50%}
+ 100%{background-position:0% 50%}
+ }
+ </style>
+</head>
+<body>
+ <main class="stage">
+ <section class="card">
+ <h1> Picture Gallery</h1>
+ <p class="subtitle">Your Memories , Pookie</p>
+ 
+ <button class="slideshow-toggle" id="slideshowBtn"> View Slideshow</button>
+
+ <!-- Category 1: Officially Focused -->
+ <div class="category">
+ <h2 class="category-title">Focused </h2>
+ <div class="category-grid" style="grid-template-columns:1fr;">
+ <div class="pic-slot">
+ <img src="images/focused.jpg" alt="Focused memory" />
+ <input type="file" id="pic-0" accept="image/*" />
+ </div>
+ </div>
+ </div>
+
+ <!-- Category 2: Stylish -->
+ <div class="category">
+ <h2 class="category-title">Stylish </h2>
+ <div class="category-grid" style="grid-template-columns:repeat(3,1fr);">
+ <div class="pic-slot">
+ <img src="images/stylish-1.jpg" alt="Stylish memory 1" />
+ <input type="file" id="pic-1" accept="image/*" />
+ </div>
+ <div class="pic-slot">
+ <img src="images/stylish-2.jpg" alt="Stylish memory 2" />
+ <input type="file" id="pic-2" accept="image/*" />
+ </div>
+ <div class="pic-slot">
+ <img src="images/stylish-3.jpg" alt="Stylish memory 3" />
+ <input type="file" id="pic-3" accept="image/*" />
+ </div>
+ </div>
+ </div>
+
+ <!-- Category 3: Social -->
+ <div class="category">
+ <h2 class="category-title">Social </h2>
+ <div class="category-grid" style="grid-template-columns:repeat(3,1fr);">
+ <div class="pic-slot">
+ <img src="images/social-1.jpg" alt="Social memory 1" />
+ <input type="file" id="pic-4" accept="image/*" />
+ </div>
+ <div class="pic-slot">
+ <img src="images/social-2.jpg" alt="Social memory 2" />
+ <input type="file" id="pic-5" accept="image/*" />
+ </div>
+ <div class="pic-slot">
+ <img src="images/social-3.jpg" alt="Social memory 3" />
+ <input type="file" id="pic-6" accept="image/*" />
+ </div>
+ </div>
+ </div>
+
+ <!-- Category 4: Looks Innocent -->
+ <div class="category">
+ <h2 class="category-title">Looks Innocent </h2>
+ <div class="category-grid" style="grid-template-columns:repeat(4,1fr);">
+ <div class="pic-slot">
+ <img src="images/innocent-1.jpg" alt="Looks Innocent memory 1" />
+ <input type="file" id="pic-7" accept="image/*" />
+ </div>
+ <div class="pic-slot">
+ <img src="images/innocent-2.jpg" alt="Looks Innocent memory 2" />
+ <input type="file" id="pic-8" accept="image/*" />
+ </div>
+ <div class="pic-slot">
+ <img src="images/innocent-3.jpg" alt="Looks Innocent memory 3" />
+ <input type="file" id="pic-9" accept="image/*" />
+ </div>
+ <div class="pic-slot">
+ <img src="images/innocent-4.jpg" alt="Looks Innocent memory 4" />
+ <input type="file" id="pic-10" accept="image/*" />
+ </div>
+ </div>
+ </div>
+
+ <!-- Category 5: Self Love -->
+ <div class="category">
+ <h2 class="category-title">Self Love </h2>
+ <div class="category-grid" style="grid-template-columns:repeat(2,1fr);">
+ <div class="pic-slot">
+ <img src="images/selflove-1.jpg" alt="Self Love memory 1" />
+ <input type="file" id="pic-11" accept="image/*" />
+ </div>
+ <div class="pic-slot">
+ <img src="images/selflove-2.jpg" alt="Self Love memory 2" />
+ <input type="file" id="pic-12" accept="image/*" />
+ </div>
+ </div>
+ </div>
+
+ <!-- Category 6: Nasty -->
+ <div class="category">
+ <h2 class="category-title">Nasty </h2>
+ <div class="category-grid" style="grid-template-columns:repeat(2,1fr);">
+ <div class="pic-slot">
+ <img src="images/nasty-1.jpg" alt="Nasty memory 1" />
+ <input type="file" id="pic-13" accept="image/*" />
+ </div>
+ <div class="pic-slot">
+ <img src="images/nasty-2.jpg" alt="Nasty memory 2" />
+ <input type="file" id="pic-14" accept="image/*" />
+ </div>
+ </div>
+ </div>
+
+ <p class="no-content">Saved memories are shown here as a static gallery.</p>
+ <a href="thank-you.html" class="back-btn">Back to Thank You</a>
+ </section>
+ </main>
+
+ <!-- Slideshow Modal -->
+ <div class="slideshow-modal" id="slideshowModal">
+ <button class="close-slideshow" onclick="closeSlideshow()"></button>
+ <div class="slideshow-container">
+ <div id="slidesContainer"></div>
+ <div class="slideshow-controls">
+ <button class="slide-btn" onclick="previousSlide()"> Previous</button>
+ <button class="slide-btn" id="playBtn" onclick="togglePlayPause()"> Pause</button>
+ <button class="slide-btn" onclick="nextSlide()">Next </button>
+ </div>
+ </div>
+ </div>
+
+ <script>
+ const pictureIds = Array.from({length:15}, (_, i) => `pic-${i}`);
+ const DB_NAME = 'hb_gallery_db';
+ const DB_STORE = 'images';
+ let db = null;
+ let slides = [];
+ let currentSlide = 0;
+ let isPlaying = true;
+ let autoPlayInterval = null;
+
+ function openGalleryDb(){
+ return new Promise((resolve, reject) => {
+ const req = indexedDB.open(DB_NAME, 1);
+ req.onupgradeneeded = (event) => {
+ const database = event.target.result;
+ if (!database.objectStoreNames.contains(DB_STORE)) {
+ database.createObjectStore(DB_STORE);
+ }
+ };
+ req.onsuccess = () => resolve(req.result);
+ req.onerror = () => reject(req.error);
+ });
+ }
+
+ function getImage(key){
+ return new Promise((resolve, reject) => {
+ const tx = db.transaction(DB_STORE, 'readonly');
+ const store = tx.objectStore(DB_STORE);
+ const req = store.get(key);
+ req.onsuccess = () => resolve(req.result || null);
+ req.onerror = () => reject(req.error);
+ });
+ }
+
+ function setImage(key, value){
+ return new Promise((resolve, reject) => {
+ const tx = db.transaction(DB_STORE, 'readwrite');
+ const store = tx.objectStore(DB_STORE);
+ const req = store.put(value, key);
+ req.onsuccess = () => resolve();
+ req.onerror = () => reject(req.error);
+ });
+ }
+
+ async function migrateLegacyStorage(){
+ for (const id of pictureIds) {
+ const legacyKey = `gallery_${id}`;
+ const legacy = localStorage.getItem(legacyKey);
+ if (legacy) {
+ await setImage(id, legacy);
+ localStorage.removeItem(legacyKey);
+ }
+ }
+ }
+
+ function showImageInSlot(index, imgData){
+ const input = document.getElementById(`pic-${index}`);
+ const picSlot = input.parentElement;
+ picSlot.classList.add('locked');
+ input.disabled = true;
+ const existing = picSlot.querySelector('img');
+ if (existing) {
+ existing.src = imgData;
+ return;
+ }
+ const img = document.createElement('img');
+ img.src = imgData;
+ const placeholder = picSlot.querySelector('.pic-slot-placeholder');
+ if (placeholder) placeholder.replaceWith(img);
+ else picSlot.prepend(img);
+ }
+
+ async function initializeGallery(){
+ db = await openGalleryDb();
+ await migrateLegacyStorage();
+
+ pictureIds.forEach((id, idx) => {
+ const input = document.getElementById(id);
+ const picSlot = input.parentElement;
+ picSlot.classList.add('locked');
+ picSlot.removeAttribute('onclick');
+ input.disabled = true;
+ });
+
+ for (let idx = 0; idx < pictureIds.length; idx++) {
+ const img = await getImage(pictureIds[idx]);
+ if (img) showImageInSlot(idx, img);
+ }
+ await loadAllImages();
+ }
+
+ window.addEventListener('load', () => {
+ initializeGallery().catch(() => {
+ // Keep page usable even if browser blocks IndexedDB.
+ loadAllImages();
+ });
+ });
+
+ function handleImageUpload(e, index){
+ const file = e.target.files[0];
+ if(!file) return;
+ const reader = new FileReader();
+ reader.onload = async (event) => {
+ const imgData = event.target.result;
+ await setImage(`pic-${index}`, imgData);
+ showImageInSlot(index, imgData);
+ await loadAllImages();
+ };
+ reader.readAsDataURL(file);
+ }
+
+ async function loadAllImages(){
+ slides = [];
+ for (const id of pictureIds) {
+ const img = db ? await getImage(id) : null;
+ if(img) slides.push(img);
+ }
+ if(slides.length === 0){
+ document.getElementById('slideshowBtn').disabled = true;
+ document.getElementById('slideshowBtn').style.opacity = '0.5';
+ } else {
+ document.getElementById('slideshowBtn').disabled = false;
+ document.getElementById('slideshowBtn').style.opacity = '1';
+ }
+ }
+
+ function openSlideshow(){
+ if(slides.length === 0) return;
+ currentSlide = 0;
+ isPlaying = true;
+ document.getElementById('slideshowModal').classList.add('active');
+ renderSlides();
+ startAutoPlay();
+ }
+
+ function closeSlideshow(){
+ document.getElementById('slideshowModal').classList.remove('active');
+ stopAutoPlay();
+ }
+
+ function renderSlides(){
+ const container = document.getElementById('slidesContainer');
+ container.innerHTML = '';
+ slides.forEach((imgSrc, idx) => {
+ const slide = document.createElement('div');
+ slide.className = `slide ${idx === currentSlide ? 'active' : ''}`;
+ slide.innerHTML = `<img src="${imgSrc}" /><div class="slide-counter">${idx + 1} / ${slides.length}</div>`;
+ container.appendChild(slide);
+ });
+ }
+
+ function nextSlide(){
+ currentSlide = (currentSlide + 1) % slides.length;
+ renderSlides();
+ }
+
+ function previousSlide(){
+ currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+ renderSlides();
+ }
+
+ function togglePlayPause(){
+ isPlaying = !isPlaying;
+ const btn = document.getElementById('playBtn');
+ if(isPlaying){
+ btn.textContent = ' Pause';
+ startAutoPlay();
+ } else {
+ btn.textContent = ' Play';
+ stopAutoPlay();
+ }
+ }
+
+ function startAutoPlay(){
+ stopAutoPlay();
+ autoPlayInterval = setInterval(() => {
+ nextSlide();
+ }, 3000);
+ }
+
+ function stopAutoPlay(){
+ if(autoPlayInterval) clearInterval(autoPlayInterval);
+ }
+
+ document.getElementById('slideshowBtn').addEventListener('click', openSlideshow);
+ document.getElementById('slideshowModal').addEventListener('click', (e) => {
+ if(e.target === document.getElementById('slideshowModal')) closeSlideshow();
+ });
+ </script> <script src="player.js"></script>
+</body>
+</html>
+
+

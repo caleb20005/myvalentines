@@ -1,0 +1,152 @@
+﻿:root{
+ --bg1:#ffe6f0;
+ --bg2:#ffd1e8;
+ --accent:#ff4d88;
+ --accent2:#ff7bb3;
+ --card:#ffffffaa;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+ margin:0;
+ font-family:Montserrat,system-ui,Arial,Helvetica,sans-serif;
+ /* animated gradient shifting through pink purple light red */
+ background: linear-gradient(120deg, #ffb3c6 0%, #c8a2ff 35%, #ff8aa2 65%, #ffd1d9 100%);
+ background-size: 600% 600%;
+ animation: gradientShift 12s ease infinite;
+ display:flex;align-items:center;justify-content:center;
+ padding:3rem;
+}
+.stage{width:100%;max-width:960px}
+.card{
+ position:relative;
+ background:var(--card);
+ border-radius:22px;
+ padding:3.5rem 2.5rem;
+ box-shadow:0 12px 30px rgba(0,0,0,0.15);
+ overflow:hidden;
+ text-align:center;
+}
+.headline{
+ font-family:Parisienne, cursive;
+ font-size:4rem;
+ margin:0;
+ color:#fff;
+ text-shadow:0 6px 20px rgba(255,77,136,.25), 0 2px 6px rgba(0,0,0,.12);
+}
+.sub{margin:.2rem 0 1rem 0;color:#ff2a6d;font-weight:700;font-family:Caveat,cursive;font-size:1.8rem}
+.message{
+ color:#5a2a3a;
+ margin:0 0 1.4rem;
+ font-size:1.25rem;
+ font-family:Caveat,cursive;
+ font-weight:400;
+ filter:blur(6px);
+ opacity:.9;
+ letter-spacing:.04em;
+ transition:filter .35s ease, opacity .35s ease, letter-spacing .35s ease;
+}
+.message.revealed{
+ filter:blur(0);
+ opacity:1;
+ letter-spacing:normal;
+}
+.appreciation{color:#6b3a4a;margin:0.8rem 0 1.4rem;font-size:1.1rem;line-height:1.6;font-style:italic;opacity:0.95;font-family:Caveat,cursive}
+.credit{margin-top:1rem;text-align:center;color:#9a5566;font-size:.9rem}
+
+.hearts{position:absolute;inset:0;pointer-events:none}
+.heart{
+ --size:36px;
+ width:var(--size);height:var(--size);
+ position:absolute;
+ left:var(--x);top:var(--y);
+ transform:translate(-50%,-50%) scale(1);
+ color:var(--accent);
+ filter:drop-shadow(0 6px 10px rgba(255,77,136,.14));
+ animation:float calc(8s - var(--i)*1s) ease-in-out infinite, beat 1.6s cubic-bezier(.33,.9,.56,1) calc(var(--i)*120ms) infinite;
+}
+.heart::before,.heart::after{
+ content:"";position:absolute;width:100%;height:100%;background:currentColor;border-radius:50%;
+}
+.heart::before{top:-25%;left:0}
+.heart::after{left:25%;top:0;transform:rotate(45deg)}
+
+@keyframes float{
+ 0%{transform:translate(-50%,-50%) translateY(0) rotate(0) scale(1)}
+ 50%{transform:translate(-50%,-50%) translateY(-40px) rotate(-6deg) scale(1.05)}
+ 100%{transform:translate(-50%,-50%) translateY(0) rotate(0) scale(1)}
+}
+@keyframes beat{
+ 0%,100%{transform:translate(-50%,-50%) scale(1)}
+ 40%{transform:translate(-50%,-50%) scale(1.15)}
+}
+
+.cupids{position:absolute;right:-20px;top:-10px;color:rgba(255,123,179,.12);width:260px;height:260px;transform:rotate(12deg);pointer-events:none}
+.cupid{width:100%;height:100%}
+.cupid.small{width:160px;height:160px;position:absolute;left:-40px;top:40px;opacity:.14}
+
+/* Controls */
+.controls{display:flex;gap:.5rem;align-items:center;justify-content:center;margin:1.1rem 0;flex-wrap:wrap}
+.controls .txt{padding:.5rem .75rem;border-radius:8px;border:1px solid rgba(0,0,0,0.06);min-width:180px}
+.btn{background:linear-gradient(180deg,var(--accent),var(--accent2));color:white;padding:.55rem .8rem;border-radius:10px;border:none;cursor:pointer;font-weight:700;box-shadow:0 6px 14px rgba(255,77,136,.12)}
+.btn:active{transform:translateY(1px)}
+
+.response-buttons{display:block;gap:.6rem;justify-content:center;margin-top:.8rem;position:relative;min-height:48px}
+.resp-btn{padding:.55rem .9rem;border-radius:10px;border:none;background:linear-gradient(180deg,#ff6b9a,#ff4d88);color:white;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(255,77,136,.16);position:absolute;top:0;transition:left .22s ease, top .22s ease, transform .12s ease}
+.resp-btn.negative{background:linear-gradient(180deg,#ffd1d9,#ff9aa6);color:#490012}
+.resp-btn:active{transform:translateY(1px)}
+.resp-feedback{margin-top:.6rem;font-size:.98rem;color:#5a2a3a}
+
+/* burst-heart (used by script) */
+.burst-heart{position:absolute;width:28px;height:28px;color:var(--accent);pointer-events:none;animation:burst 900ms cubic-bezier(.2,.9,.2,1) forwards}
+.burst-heart::before,.burst-heart::after{content:"";position:absolute;width:100%;height:100%;background:currentColor;border-radius:50%}
+.burst-heart::before{top:-25%;left:0}
+.burst-heart::after{left:25%;top:0;transform:rotate(45deg)}
+@keyframes burst{
+ 0%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+ 60%{opacity:1;transform:translate(-50%,-120%) scale(1.25)}
+ 100%{opacity:0;transform:translate(-50%,-260%) scale(.8)}
+}
+
+/* Confetti pieces */
+.confetti{position:absolute;width:10px;height:14px;opacity:0;transform-origin:center;pointer-events:none}
+@keyframes confettiFall{to{transform:translateY(120vh) rotate(720deg);opacity:1}}
+
+@keyframes gradientShift{
+ 0%{background-position:0% 50%}
+ 50%{background-position:100% 50%}
+ 100%{background-position:0% 50%}
+}
+
+/* Background crystalline 3D hearts */
+.bg-hearts{
+ position:fixed;inset:0;z-index:-1;overflow:hidden;perspective:1200px;
+}
+.crystal-heart{
+ position:absolute;width:120px;height:120px;
+ color:#ff1b6d;filter:drop-shadow(0 8px 20px rgba(255,27,109,.25)) brightness(1.15) saturate(1.3);
+ animation:float3d var(--dur,20s) ease-in-out infinite;
+ transform-style:preserve-3d;
+}
+.crystal-heart::before,.crystal-heart::after{
+ content:"";position:absolute;width:100%;height:100%;background:currentColor;
+ border-radius:50%;opacity:.85;filter:drop-shadow(0 4px 10px rgba(255,27,109,.2));
+}
+.crystal-heart::before{top:-30%;left:0;box-shadow:inset -4px -4px 10px rgba(0,0,0,.1),inset 2px 2px 8px rgba(255,255,255,.4)}
+.crystal-heart::after{left:30%;top:0;transform:rotate(45deg);box-shadow:inset -4px -4px 10px rgba(0,0,0,.1),inset 2px 2px 8px rgba(255,255,255,.4)}
+
+@keyframes float3d{
+ 0%{transform:translateY(110vh) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(.6)}
+ 25%{transform:translateY(50vh) rotateX(25deg) rotateY(-30deg) rotateZ(20deg) scale(1.1)}
+ 50%{transform:translateY(0) rotateX(-15deg) rotateY(45deg) rotateZ(-30deg) scale(1)}
+ 75%{transform:translateY(-40vh) rotateX(35deg) rotateY(-20deg) rotateZ(45deg) scale(.9)}
+ 100%{transform:translateY(-110vh) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(.6)}
+}
+
+/* Responsive */
+@media (max-width:520px){
+ .headline{font-size:2.6rem}
+ .card{padding:2rem}
+ .heart{--size:28px}
+}
+
